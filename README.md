@@ -12,10 +12,10 @@ NOTES:
 
 -->
 
-[![GM Consult Pty Ltd](https://raw.githubusercontent.com/GM-Consult-Pty-Ltd/dart_package_template/main/dev/images/gmconsult_dev_header.png?raw=true "GM Consult Pty Ltd")](https://github.com/GM-Consult-Pty-Ltd)
-## **TODO: A short description of your package.**
+[![GM Consult Pty Ltd](https://raw.githubusercontent.com/GM-Consult-Pty-Ltd/hive_text_index/main/dev/images/gmconsult_dev_header.png?raw=true "GM Consult Pty Ltd")](https://github.com/GM-Consult-Pty-Ltd)
+## **A *Hive based* *InvertedIndex* with *AsyncCallbackIndexMixin*.**
 
-TODO: A short description of your package.
+A *Hive based* *InvertedIndex* with *AsyncCallbackIndexMixin*.
 
 *THIS PACKAGE IS **PRE-RELEASE** AND SUBJECT TO DAILY BREAKING CHANGES.*
 
@@ -41,13 +41,13 @@ In the `pubspec.yaml` of your flutter project, add the following dependency:
 
 ```yaml
 dependencies:
-  dart_package_template: <latest_version>
+  hive_text_index: <latest_version>
 ```
 
 In your code file add the following import:
 
 ```dart
-import 'package:dart_package_template/dart_package_template.dart';
+import 'package:hive_text_index/hive_text_index.dart';
 ```
 
 TODO: describe usage.
@@ -56,7 +56,7 @@ TODO: describe usage.
 
 ## API
 
-The [API](https://pub.dev/documentation/dart_package_template/latest/) exposes
+The [API](https://pub.dev/documentation/hive_text_index/latest/) exposes
 
 TODO: describe the API
 
@@ -64,7 +64,7 @@ TODO: describe the API
 
 ## Definitions
 
-The following definitions are used throughout the [documentation](https://pub.dev/documentation/dart_package_template/latest/):
+The following definitions are used throughout the [documentation](https://pub.dev/documentation/hive_text_index/latest/):
 * TODO: add definitions
 
 (*[back to top](#)*)
@@ -77,7 +77,7 @@ The following definitions are used throughout the [documentation](https://pub.de
 
 ## Issues
 
-If you find a bug please fill an [issue](https://github.com/GM-Consult-Pty-Ltd/dart_package_template/issues).  
+If you find a bug please fill an [issue](https://github.com/GM-Consult-Pty-Ltd/hive_text_index/issues).  
 
 This project is a supporting package for a revenue project that has priority call on resources, so please be patient if we don't respond immediately to issues or pull requests.
 
