@@ -4,8 +4,19 @@ Copyright © 2022, GM Consult Pty Ltd
 All rights reserved.
 -->
 
-<!-- Always use the heading structure below -->
 *THIS PACKAGE IS **PRE-RELEASE** AND SUBJECT TO DAILY BREAKING CHANGES.*
+
+## 0.0.1-2
+**PRE-RELEASE**
+
+### *New*
+* Added method `HiveTextIndex.close`.
+
+### *Updated*
+* Dependencies.
+* Tests.
+* Documentation.
+* Examples.
 
 ## 0.0.1-1
 **PRE-RELEASE, Initial version**

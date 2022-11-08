@@ -59,6 +59,14 @@ class HiveTextIndex
         postingsIndex);
   }
 
+  /// Closes all the [Hive] boxes used by this index.
+  Future<void> close() async {
+    await dictionary.dataStore.close();
+    await kGramIndex.dataStore.close();
+    await postingsIndex.dataStore.close();
+    await keywordIndex.dataStore.close();
+  }
+
   @override
   final int k;
 
