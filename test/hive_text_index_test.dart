@@ -19,7 +19,7 @@ String get kPath => '${Directory.current.path}\\dev\\data';
 
 final kZones = {'id': 1.0, 'name': 1.0, 'hashTag': 1.0};
 
-final kK = 2;
+final kK = 3;
 
 final kStrategy = TokenizingStrategy.all;
 

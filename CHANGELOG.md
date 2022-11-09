@@ -7,6 +7,13 @@ All rights reserved.
 *THIS PACKAGE IS **PRE-RELEASE** AND SUBJECT TO DAILY BREAKING CHANGES.*
 
 
+## 0.0.1-4
+**PRE-RELEASE**
+
+### *Updated*
+* Dependencies.
+* Tests.
+
 ## 0.0.1-3
 **PRE-RELEASE**
 
