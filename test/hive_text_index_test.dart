@@ -5,27 +5,29 @@
 // change this value to suit your tests and de-bugging needs
 @Timeout(Duration(minutes: 90))
 
-// ignore: unused_import
 import 'package:hive/hive.dart';
 import 'package:hive_text_index/hive_text_index.dart';
 import 'package:test/test.dart';
 import 'package:gmconsult_dev/gmconsult_dev.dart';
 import 'package:text_indexing/text_indexing.dart';
 import 'package:text_indexing/extensions.dart';
+// import 'package:text_analysis/implementation.dart';
 import 'dart:io';
 import 'package:text_indexing/type_definitions.dart';
 
 String get kPath => '${Directory.current.path}\\dev\\data';
 
-final kZones = {'id': 1.0, 'name': 1.0, 'hashTag': 1.0, 'description': 0.5};
+final kZones = {'id': 1.0, 'name': 1.0, 'hashTag': 1.0};
 
 final kK = 2;
 
-final kStrategy = TokenizingStrategy.ngrams;
+final kStrategy = TokenizingStrategy.all;
 
 final kNGramRange = NGramRange(1, 2);
 
 final kIndexName = 'hashtags';
+
+TextTokenizer get kTokenizer => TextTokenizer(analyzer: HashTagAnalyzer());
 
 void main() {
   group('A group of tests', () {
@@ -67,18 +69,22 @@ void main() {
       final keywordsCount = index.keywordIndex.dataStore.length;
       final kgramsCount = index.kGramIndex.dataStore.length;
 
+      final keyWords = index.keywordIndex.dataStore.keys;
+
+      print(keyWords);
+
       final kw = 'dollar';
 
       final postingsBox = index.keywordIndex.dataStore;
       final posting = postingsBox.get(kw);
-      print('$kw: $posting');
+      // print('$kw: $posting');
 
       final kwBox = index.keywordIndex.dataStore;
       final kwposting = kwBox.get(kw);
-      print('$kw: $kwposting');
+      // print('$kw: $kwposting');
       // });
 
-      final terms = ['Apple', 'Tesla', 'Intel', 'Alphabet'];
+      final terms = ['#Apple', 'Tesla', 'Intel', 'Alphabet'];
 
       await Future.forEach(terms, (String term) async {
         final tokenTerms = (await index.tokenizer.tokenize(term)).terms;
@@ -116,6 +122,7 @@ void main() {
       });
 
       await service.close();
+      await index.close();
     }));
 
     test('Index hashtags', () async {
@@ -148,6 +155,8 @@ void main() {
       await index.upsertKGramIndex(iMindex.kGramIndex);
       await index.upsertKeywordPostings(iMindex.keywordPostings);
       await service.close();
+      
+      await index.close();
     });
   });
 }
@@ -170,6 +179,7 @@ Future<HiveTextIndex> hiveIndex(
     CollectionSizeCallback collectionSizeLoader) async {
   return await HiveTextIndex.hydrate(kIndexName,
       collectionSizeLoader: collectionSizeLoader,
+      tokenizer: kTokenizer,
       nGramRange: kNGramRange,
       k: kK,
       zones: kZones,
@@ -179,8 +189,8 @@ Future<HiveTextIndex> hiveIndex(
 Future<InMemoryIndex> inMemoryIndex(int collectionSize) async {
   return InMemoryIndex(
       collectionSize: collectionSize,
-      tokenizer: TextTokenizer.english,
-      keywordExtractor: English.analyzer.keywordExtractor,
+      tokenizer: kTokenizer,
+      keywordExtractor: kTokenizer.analyzer.keywordExtractor,
       nGramRange: kNGramRange,
       k: kK,
       zones: kZones,
@@ -209,4 +219,27 @@ Future<JsonDataService<Box<String>>> get securitiesService async {
 Future<JsonDataService<Box<String>>> get hashtagsService async {
   final Box<String> dataStore = await Hive.openBox('hashtags');
   return HiveJsonService(dataStore);
+}
+
+class HashTagAnalyzer with LatinLanguageAnalyzerMixin {
+  @override
+  TermFilter get termFilter => (term) => {term.trim()};
+
+  @override
+  Set<String> get stopWords => {};
+
+  @override
+  Stemmer get stemmer => (term) => term.trim();
+
+  @override
+  Map<String, String> get abbreviations => {};
+
+  @override
+  CharacterFilter get characterFilter => (term) => term.trim();
+
+  @override
+  Lemmatizer get lemmatizer => (term) => term.trim();
+
+  @override
+  Map<String, String> get termExceptions => {};
 }

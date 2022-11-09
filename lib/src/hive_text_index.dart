@@ -24,10 +24,10 @@ class HiveTextIndex
     required CollectionSizeCallback collectionSizeLoader,
     required ZoneWeightMap zones,
     // required bool Function(int, int)? compactionStrategy,
-    NGramRange nGramRange = const NGramRange(1, 2),
-    TextTokenizer tokenizer = TextTokenizer.english,
-    TokenizingStrategy strategy = TokenizingStrategy.all,
-    int k = 2,
+    required NGramRange nGramRange,
+    required TextTokenizer tokenizer,
+    required TokenizingStrategy strategy,
+    required int k,
   }) async {
     final dictionary = HiveDictionary(await Hive.openBox(
       '${name}dictionary',
