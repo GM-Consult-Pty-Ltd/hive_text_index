@@ -23,11 +23,11 @@ class HiveTextIndex
     String name, {
     required CollectionSizeCallback collectionSizeLoader,
     required ZoneWeightMap zones,
+    required int k,
     // required bool Function(int, int)? compactionStrategy,
-    required NGramRange nGramRange,
     required TextTokenizer tokenizer,
     required TokenizingStrategy strategy,
-    required int k,
+    NGramRange? nGramRange,
   }) async {
     final dictionary = HiveDictionary(await Hive.openBox(
       '${name}dictionary',
@@ -71,7 +71,7 @@ class HiveTextIndex
   final int k;
 
   @override
-  final NGramRange nGramRange;
+  final NGramRange? nGramRange;
 
   @override
   final TokenizingStrategy strategy;

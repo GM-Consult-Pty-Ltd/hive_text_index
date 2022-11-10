@@ -10,6 +10,16 @@ All rights reserved.
 ## 0.0.1-4
 **PRE-RELEASE**
 
+### *Bug fixes*
+* Fixed `HashtagsAnalyzer`.
+
+### *Updated*
+* Dependencies.
+* Tests.
+
+## 0.0.1-4
+**PRE-RELEASE**
+
 ### *Updated*
 * Dependencies.
 * Tests.

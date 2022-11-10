@@ -14,18 +14,11 @@ import 'package:text_indexing/extensions.dart';
 // import 'package:text_analysis/implementation.dart';
 import 'dart:io';
 import 'package:text_indexing/type_definitions.dart';
+import 'hashtag_analyzer.dart';
 
 String get kPath => '${Directory.current.path}\\dev\\data';
 
-final kZones = {'id': 1.0, 'name': 1.0, 'hashTag': 1.0};
 
-final kK = 3;
-
-final kStrategy = TokenizingStrategy.all;
-
-final kNGramRange = NGramRange(1, 2);
-
-final kIndexName = 'hashtags';
 
 TextTokenizer get kTokenizer => TextTokenizer(analyzer: HashTagAnalyzer());
 
@@ -155,7 +148,7 @@ void main() {
       await index.upsertKGramIndex(iMindex.kGramIndex);
       await index.upsertKeywordPostings(iMindex.keywordPostings);
       await service.close();
-      
+
       await index.close();
     });
   });
@@ -177,13 +170,13 @@ bool compactionStrategy(int entries, int deleted) {
 
 Future<HiveTextIndex> hiveIndex(
     CollectionSizeCallback collectionSizeLoader) async {
-  return await HiveTextIndex.hydrate(kIndexName,
+  return await HiveTextIndex.hydrate(HashTagAnalyzer.kIndexName,
       collectionSizeLoader: collectionSizeLoader,
       tokenizer: kTokenizer,
-      nGramRange: kNGramRange,
-      k: kK,
-      zones: kZones,
-      strategy: kStrategy);
+      // nGramRange: HashTagAnalyzer.kNGramRange,
+      k: HashTagAnalyzer.kK,
+      zones: HashTagAnalyzer.kZones,
+      strategy: HashTagAnalyzer.kStrategy);
 }
 
 Future<InMemoryIndex> inMemoryIndex(int collectionSize) async {
@@ -191,10 +184,10 @@ Future<InMemoryIndex> inMemoryIndex(int collectionSize) async {
       collectionSize: collectionSize,
       tokenizer: kTokenizer,
       keywordExtractor: kTokenizer.analyzer.keywordExtractor,
-      nGramRange: kNGramRange,
-      k: kK,
-      zones: kZones,
-      strategy: kStrategy);
+      // nGramRange: HashTagAnalyzer.kNGramRange,
+      k: HashTagAnalyzer.kK,
+      zones: HashTagAnalyzer.kZones,
+      strategy: HashTagAnalyzer.kStrategy);
 }
 
 class TestIndexer extends TextIndexerBase {
@@ -219,27 +212,4 @@ Future<JsonDataService<Box<String>>> get securitiesService async {
 Future<JsonDataService<Box<String>>> get hashtagsService async {
   final Box<String> dataStore = await Hive.openBox('hashtags');
   return HiveJsonService(dataStore);
-}
-
-class HashTagAnalyzer with LatinLanguageAnalyzerMixin {
-  @override
-  TermFilter get termFilter => (term) => {term.trim()};
-
-  @override
-  Set<String> get stopWords => {};
-
-  @override
-  Stemmer get stemmer => (term) => term.trim();
-
-  @override
-  Map<String, String> get abbreviations => {};
-
-  @override
-  CharacterFilter get characterFilter => (term) => term.trim();
-
-  @override
-  Lemmatizer get lemmatizer => (term) => term.trim();
-
-  @override
-  Map<String, String> get termExceptions => {};
 }
