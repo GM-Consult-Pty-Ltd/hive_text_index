@@ -18,9 +18,7 @@ import 'hashtag_analyzer.dart';
 
 String get kPath => '${Directory.current.path}\\dev\\data';
 
-
-
-TextTokenizer get kTokenizer => TextTokenizer(analyzer: HashTagAnalyzer());
+TextAnalyzer get kAnalyzer => HashTagAnalyzer();
 
 void main() {
   group('A group of tests', () {
@@ -33,7 +31,7 @@ void main() {
 
       final service = await hashtagsService;
 
-      final keys = service.dataStore.keys.map((e) => e.toString()).toList();
+      // final keys = service.dataStore.keys.map((e) => e.toString()).toList();
 
       results.addAll(
           (await service.batchRead(['Apple', 'Tesla', 'Intel', 'Alphabet']))
@@ -57,30 +55,31 @@ void main() {
       Future<int> collectionSizeLoader() async => service.dataStore.length;
 
       final index = await hiveIndex(collectionSizeLoader);
-      final postingsCount = index.postingsIndex.dataStore.length;
-      final dftCount = index.postingsIndex.dataStore.length;
-      final keywordsCount = index.keywordIndex.dataStore.length;
-      final kgramsCount = index.kGramIndex.dataStore.length;
+      // final postingsCount = index.postingsIndex.dataStore.length;
+      // final dftCount = index.postingsIndex.dataStore.length;
+      // final keywordsCount = index.keywordIndex.dataStore.length;
+      // final kgramsCount = index.kGramIndex.dataStore.length;
 
-      final keyWords = index.keywordIndex.dataStore.keys;
+      // final keyWords = index.keywordIndex.dataStore.keys;
+      // for (final keyword in keyWords) {
+      //   print(keyword);
+      // }
 
-      print(keyWords);
+      // final kw = 'dollar';
 
-      final kw = 'dollar';
-
-      final postingsBox = index.keywordIndex.dataStore;
-      final posting = postingsBox.get(kw);
+      // final postingsBox = index.keywordIndex.dataStore;
+      // final posting = postingsBox.get(kw);
       // print('$kw: $posting');
 
-      final kwBox = index.keywordIndex.dataStore;
-      final kwposting = kwBox.get(kw);
+      // final kwBox = index.keywordIndex.dataStore;
+      // final kwposting = kwBox.get(kw);
       // print('$kw: $kwposting');
       // });
 
-      final terms = ['#Apple', 'Tesla', 'Intel', 'Alphabet'];
+      final terms = ['Apple', 'Tesla', 'Intel', 'Alphabet'];
 
       await Future.forEach(terms, (String term) async {
-        final tokenTerms = (await index.tokenizer.tokenize(term)).terms;
+        final tokenTerms = (await index.analyzer.tokenizer(term)).terms;
         if (tokenTerms.isNotEmpty) {
           final qt = tokenTerms.first;
           final kGrams = qt.kGrams();
@@ -95,14 +94,17 @@ void main() {
 
           final results = [
             {'Item': 'Term', 'Value': qt},
-            {'Item': 'dFt', 'Value': dFtMap.values.first},
+            {'Item': 'dFt', 'Value': dFtMap.isEmpty ? '' : dFtMap.values.first},
             {
               'Item': 'N Keyword postings',
               'Value': keywordPostings.isEmpty
                   ? ''
                   : keywordPostings.values.first.length
             },
-            {'Item': 'N postings', 'Value': postings.values.first.length},
+            {
+              'Item': 'N postings',
+              'Value': postings.isEmpty ? '' : postings.values.first.length
+            },
             {'Item': 'N k-gram postings', 'Value': nKgramPostings},
           ];
 
@@ -128,10 +130,15 @@ void main() {
       var i = 0;
       final start = DateTime.now();
       // keys = keys.sublist(16600);
+      PostingsMap lastPostingsMap = {};
       await Future.forEach(keys, (String key) async {
         final json = await service.read(key);
         if (json != null) {
-          await indexer.indexJson(key, json);
+          final name = json['name'].toString().toLowerCase();
+          if (name.contains('intel corp')) {
+            print(json);
+          }
+          lastPostingsMap = await indexer.indexJson(key, json);
         }
         final l = await iMindex.vocabularyLength;
 
@@ -140,6 +147,7 @@ void main() {
           final dT = DateTime.now().difference(start).inSeconds;
           print('Indexed $i hashTags in ${dT.toStringAsFixed(0)} seconds. '
               'Found $l terms.');
+          // print(lastPostingsMap.keys);
         }
       });
       final index = await hiveIndex(collectionSizeLoader);
@@ -172,8 +180,8 @@ Future<HiveTextIndex> hiveIndex(
     CollectionSizeCallback collectionSizeLoader) async {
   return await HiveTextIndex.hydrate(HashTagAnalyzer.kIndexName,
       collectionSizeLoader: collectionSizeLoader,
-      tokenizer: kTokenizer,
-      // nGramRange: HashTagAnalyzer.kNGramRange,
+      analyzer: kAnalyzer,
+      nGramRange: HashTagAnalyzer.kNGramRange,
       k: HashTagAnalyzer.kK,
       zones: HashTagAnalyzer.kZones,
       strategy: HashTagAnalyzer.kStrategy);
@@ -182,9 +190,9 @@ Future<HiveTextIndex> hiveIndex(
 Future<InMemoryIndex> inMemoryIndex(int collectionSize) async {
   return InMemoryIndex(
       collectionSize: collectionSize,
-      tokenizer: kTokenizer,
-      keywordExtractor: kTokenizer.analyzer.keywordExtractor,
-      // nGramRange: HashTagAnalyzer.kNGramRange,
+      analyzer: kAnalyzer,
+      keywordExtractor: kAnalyzer.keywordExtractor,
+      nGramRange: HashTagAnalyzer.kNGramRange,
       k: HashTagAnalyzer.kK,
       zones: HashTagAnalyzer.kZones,
       strategy: HashTagAnalyzer.kStrategy);

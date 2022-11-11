@@ -24,9 +24,11 @@ class HiveTextIndex
     required CollectionSizeCallback collectionSizeLoader,
     required ZoneWeightMap zones,
     required int k,
+
     // required bool Function(int, int)? compactionStrategy,
-    required TextTokenizer tokenizer,
+    required TextAnalyzer analyzer,
     required TokenizingStrategy strategy,
+    TokenFilter? tokenFilter,
     NGramRange? nGramRange,
   }) async {
     final dictionary = HiveDictionary(await Hive.openBox(
@@ -50,13 +52,14 @@ class HiveTextIndex
         collectionSizeLoader,
         nGramRange,
         strategy,
-        tokenizer,
-        tokenizer.analyzer.keywordExtractor,
+        analyzer,
+        analyzer.keywordExtractor,
         zones,
         dictionary,
         kGramIndex,
         keywordIndex,
-        postingsIndex);
+        postingsIndex,
+        tokenFilter);
   }
 
   /// Closes all the [Hive] boxes used by this index.
@@ -77,7 +80,7 @@ class HiveTextIndex
   final TokenizingStrategy strategy;
 
   @override
-  final TextTokenizer tokenizer;
+  final TextAnalyzer analyzer;
 
   @override
   final KeywordExtractor keywordExtractor;
@@ -103,13 +106,14 @@ class HiveTextIndex
     this.collectionSizeLoader,
     this.nGramRange,
     this.strategy,
-    this.tokenizer,
+    this.analyzer,
     this.keywordExtractor,
     this.zones,
     this.dictionary,
     this.kGramIndex,
     this.keywordIndex,
     this.postingsIndex,
+    this.tokenFilter,
   );
 
   @override
@@ -144,4 +148,7 @@ class HiveTextIndex
 
   @override
   Future<int> get vocabularyLength => dictionary.length();
+
+  @override
+  final TokenFilter? tokenFilter;
 }
