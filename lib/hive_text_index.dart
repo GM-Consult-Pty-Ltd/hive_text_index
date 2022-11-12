@@ -17,4 +17,5 @@ import 'package:text_indexing/text_indexing.dart';
 
 //TODO: edit pubspec.yaml
 
-export 'src/_index.dart' show HiveTextIndex;
+export 'src/_index.dart'
+    show HiveTextIndex, HiveTextIndexBase, HiveTextIndexMixin;
