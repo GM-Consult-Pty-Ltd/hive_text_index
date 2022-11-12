@@ -13,7 +13,9 @@ part 'parts/_postings.dart';
 part 'parts/_keyword_postings.dart';
 
 /// A [Hive] based [InvertedIndex] with [AsyncCallbackIndexMixin].
-class HiveTextIndex with AsyncCallbackIndexMixin implements InvertedIndex {
+abstract class HiveTextIndex
+    with AsyncCallbackIndexMixin
+    implements InvertedIndex {
 //
 
   /// Ensure that [Hive] is initialized by calling ``` Hive.init(path);```.
@@ -22,95 +24,36 @@ class HiveTextIndex with AsyncCallbackIndexMixin implements InvertedIndex {
     required CollectionSizeCallback collectionSizeLoader,
     required ZoneWeightMap zones,
     required int k,
-
-    // required bool Function(int, int)? compactionStrategy,
     required TextAnalyzer analyzer,
     required TokenizingStrategy strategy,
     TokenFilter? tokenFilter,
     NGramRange? nGramRange,
   }) async {
-    final dictionary = HiveDictionary(await Hive.openBox(
-      '${name}dictionary',
-      // compactionStrategy: compactionStrategy
-    ));
-    final kGramIndex = HiveKGramIndex(await Hive.openBox(
-      '${name}kGramIndex',
-      // compactionStrategy: compactionStrategy
-    ));
-    final keywordIndex = HiveKeywordIndex(await Hive.openBox(
-      '${name}keywordIndex',
-      // compactionStrategy: compactionStrategy
-    ));
-    final postingsIndex = HivePostingsIndex(await Hive.openBox(
-      '${name}postingsIndex',
-      // compactionStrategy: compactionStrategy
-    ));
-    return HiveTextIndex._(
-        k,
-        collectionSizeLoader,
-        nGramRange,
-        strategy,
-        analyzer,
-        zones,
-        dictionary,
-        kGramIndex,
-        keywordIndex,
-        postingsIndex,
-        tokenFilter);
+    final retVal = _HiveTextIndexImpl(k, collectionSizeLoader, nGramRange,
+        strategy, analyzer, zones, tokenFilter);
+    await retVal.init(name);
+    return retVal;
   }
-
-  /// Closes all the [Hive] boxes used by this index.
-  Future<void> close() async {
-    await dictionary.dataStore.close();
-    await kGramIndex.dataStore.close();
-    await postingsIndex.dataStore.close();
-    await keywordIndex.dataStore.close();
-  }
-
-  @override
-  final int k;
-
-  @override
-  final NGramRange? nGramRange;
-
-  @override
-  final TokenizingStrategy strategy;
-
-  @override
-  final TextAnalyzer analyzer;
-
-  @override
-  final ZoneWeightMap zones;
 
   /// A [Hive] based document frequency (Dft) index.
-  final HiveDictionary dictionary;
+  HiveDictionary get dictionary;
 
   /// A [Hive] based k-gram index.
-  final HiveKGramIndex kGramIndex;
+  HiveKGramIndex get kGramIndex;
 
   /// A [Hive] based k-gram index.
-  final HiveKeywordIndex keywordIndex;
+  HiveKeywordIndex get keywordIndex;
 
   /// A [Hive] based k-gram index.
-  final HivePostingsIndex postingsIndex;
+  HivePostingsIndex get postingsIndex;
 
-  /// Private generative constructor.
-  const HiveTextIndex._(
-    this.k,
-    this.collectionSizeLoader,
-    this.nGramRange,
-    this.strategy,
-    this.analyzer,
-    this.zones,
-    this.dictionary,
-    this.kGramIndex,
-    this.keywordIndex,
-    this.postingsIndex,
-    this.tokenFilter,
-  );
+  /// Closes all the [Hive] boxes used by this index.
+  Future<void> close();
+}
 
-  @override
-  final CollectionSizeCallback collectionSizeLoader;
+/// Mixin class implements HiveTextIndex.
+abstract class HiveTextIndexMixin implements HiveTextIndex {
+  //
 
   @override
   CollectionSizeCallback get dictionaryLengthLoader => dictionary.length;
@@ -143,5 +86,87 @@ class HiveTextIndex with AsyncCallbackIndexMixin implements InvertedIndex {
   Future<int> get vocabularyLength => dictionary.length();
 
   @override
+  Future<void> close() async {
+    await dictionary.dataStore.close();
+    await kGramIndex.dataStore.close();
+    await postingsIndex.dataStore.close();
+    await keywordIndex.dataStore.close();
+  }
+}
+
+/// Extendable base class implementation of [HiveTextIndex].
+abstract class HiveTextIndexBase
+    with HiveTextIndexMixin, AsyncCallbackIndexMixin {
+  /// A const default generative constructor.
+  HiveTextIndexBase();
+
+  /// Opens all the [Hive] boxes used by the [HiveTextIndex].
+  Future<void> init(String name) async {
+    dictionary = HiveDictionary(await Hive.openBox(
+      '${name}dictionary',
+      // compactionStrategy: compactionStrategy
+    ));
+    kGramIndex = HiveKGramIndex(await Hive.openBox(
+      '${name}kGramIndex',
+      // compactionStrategy: compactionStrategy
+    ));
+    keywordIndex = HiveKeywordIndex(await Hive.openBox(
+      '${name}keywordIndex',
+      // compactionStrategy: compactionStrategy
+    ));
+    postingsIndex = HivePostingsIndex(await Hive.openBox(
+      '${name}postingsIndex',
+    ));
+  }
+
+  /// A [Hive] based document frequency (Dft) index.
+  @override
+  late HiveDictionary dictionary;
+
+  /// A [Hive] based k-gram index.
+  @override
+  late HiveKGramIndex kGramIndex;
+
+  /// A [Hive] based k-gram index.
+  @override
+  late HiveKeywordIndex keywordIndex;
+
+  /// A [Hive] based k-gram index.
+  @override
+  late HivePostingsIndex postingsIndex;
+}
+
+/// Implementation class for [HiveTextIndex] unnamed factory.
+class _HiveTextIndexImpl extends HiveTextIndexBase {
+  /// Private generative constructor.
+  _HiveTextIndexImpl(
+    this.k,
+    this.collectionSizeLoader,
+    this.nGramRange,
+    this.strategy,
+    this.analyzer,
+    this.zones,
+    this.tokenFilter,
+  );
+
+  @override
   final TokenFilter? tokenFilter;
+
+  @override
+  final CollectionSizeCallback collectionSizeLoader;
+
+  @override
+  final int k;
+
+  @override
+  final NGramRange? nGramRange;
+
+  @override
+  final TokenizingStrategy strategy;
+
+  @override
+  final TextAnalyzer analyzer;
+
+  @override
+  final ZoneWeightMap zones;
 }
