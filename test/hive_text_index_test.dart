@@ -191,7 +191,6 @@ Future<InMemoryIndex> inMemoryIndex(int collectionSize) async {
   return InMemoryIndex(
       collectionSize: collectionSize,
       analyzer: kAnalyzer,
-      keywordExtractor: kAnalyzer.keywordExtractor,
       nGramRange: HashTagAnalyzer.kNGramRange,
       k: HashTagAnalyzer.kK,
       zones: HashTagAnalyzer.kZones,

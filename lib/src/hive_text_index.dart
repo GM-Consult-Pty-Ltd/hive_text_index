@@ -13,9 +13,7 @@ part 'parts/_postings.dart';
 part 'parts/_keyword_postings.dart';
 
 /// A [Hive] based [InvertedIndex] with [AsyncCallbackIndexMixin].
-class HiveTextIndex
-    with InvertedIndexMixin, AsyncCallbackIndexMixin
-    implements InvertedIndex {
+class HiveTextIndex with AsyncCallbackIndexMixin implements InvertedIndex {
 //
 
   /// Ensure that [Hive] is initialized by calling ``` Hive.init(path);```.
@@ -53,7 +51,6 @@ class HiveTextIndex
         nGramRange,
         strategy,
         analyzer,
-        analyzer.keywordExtractor,
         zones,
         dictionary,
         kGramIndex,
@@ -83,9 +80,6 @@ class HiveTextIndex
   final TextAnalyzer analyzer;
 
   @override
-  final KeywordExtractor keywordExtractor;
-
-  @override
   final ZoneWeightMap zones;
 
   /// A [Hive] based document frequency (Dft) index.
@@ -107,7 +101,6 @@ class HiveTextIndex
     this.nGramRange,
     this.strategy,
     this.analyzer,
-    this.keywordExtractor,
     this.zones,
     this.dictionary,
     this.kGramIndex,

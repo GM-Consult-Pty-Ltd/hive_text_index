@@ -4,8 +4,8 @@
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1, user-scalable=no">
-  <meta name="description" content="API docs for the dictionary property from the HiveTextIndex class, for the Dart programming language.">
-  <title>dictionary property - HiveTextIndex class - hive_text_index library - Dart API</title>
+  <meta name="description" content="API docs for the tokenFilter property from the HiveTextIndex class, for the Dart programming language.">
+  <title>tokenFilter property - HiveTextIndex class - hive_text_index library - Dart API</title>
 
 
   
@@ -31,9 +31,9 @@
     <li><a href="../../index.html">hive_text_index</a></li>
     <li><a href="../../hive_text_index/hive_text_index-library.html">hive_text_index</a></li>
     <li><a href="../../hive_text_index/HiveTextIndex-class.html">HiveTextIndex</a></li>
-    <li class="self-crumb">dictionary property</li>
+    <li class="self-crumb">tokenFilter property</li>
   </ol>
-  <div class="self-name">dictionary</div>
+  <div class="self-name">tokenFilter</div>
   <form class="search navbar-right" role="search">
     <input type="text" id="search-box" autocomplete="off" disabled class="form-control typeahead" placeholder="Loading search...">
   </form>
@@ -44,25 +44,27 @@
 
   <div id="dartdoc-main-content" class="main-content">
       <div>
-<h1><span class="kind-property">dictionary</span> property 
+<h1><span class="kind-property">tokenFilter</span> property 
     <a href="https://dart.dev/null-safety" class="feature feature-null-safety" title="Supports the null safety language feature.">Null safety</a>
 </h1></div>
 
         <section class="multi-line-signature">
-          HiveDictionary
-          <span class="name ">dictionary</span>
+          TokenFilter?
+          <span class="name ">tokenFilter</span>
           <div class="features">final</div>
 
         </section>
         
 <section class="desc markdown">
-  <p>A <a href="https://pub.dev/documentation/hive/2.2.3/hive/Hive.html">Hive</a> based document frequency (Dft) index.</p>
+  <p>A filter function that returns a subset of a collection of <code>Token</code>s.</p>
+<p>Used to manipulate the <a href="../../hive_text_index/HiveTextIndex/analyzer.html">analyzer</a>'s tokenizer output.</p>
 </section>
 
         
 <section class="summary source-code" id="source">
   <h2><span>Implementation</span></h2>
-  <pre class="language-dart"><code class="language-dart">final HiveDictionary dictionary;
+  <pre class="language-dart"><code class="language-dart">@override
+final TokenFilter? tokenFilter;
 
 </code></pre>
 </section>
@@ -81,7 +83,7 @@
   <li><a href="../../index.html">hive_text_index</a></li>
   <li><a href="../../hive_text_index/hive_text_index-library.html">hive_text_index</a></li>
   <li><a href="../../hive_text_index/HiveTextIndex-class.html">HiveTextIndex</a></li>
-  <li class="self-crumb">dictionary property</li>
+  <li class="self-crumb">tokenFilter property</li>
 </ol>
 
 
