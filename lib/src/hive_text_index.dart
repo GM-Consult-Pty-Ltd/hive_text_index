@@ -48,6 +48,9 @@ abstract class HiveTextIndex
   HivePostingsIndex get postingsIndex;
 
   /// Closes all the [Hive] boxes used by this index.
+  Future<void> clear();
+
+  /// Closes all the [Hive] boxes used by this index.
   Future<void> close();
 }
 
@@ -91,6 +94,14 @@ abstract class HiveTextIndexMixin implements HiveTextIndex {
     await kGramIndex.dataStore.close();
     await postingsIndex.dataStore.close();
     await keywordIndex.dataStore.close();
+  }
+
+  @override
+  Future<void> clear() async {
+    await dictionary.dataStore.clear();
+    await kGramIndex.dataStore.clear();
+    await postingsIndex.dataStore.clear();
+    await keywordIndex.dataStore.clear();
   }
 }
 
