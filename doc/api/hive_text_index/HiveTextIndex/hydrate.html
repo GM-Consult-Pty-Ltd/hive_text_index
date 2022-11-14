@@ -57,7 +57,6 @@
 <li><span class="parameter" id="hydrate-param-zones"><span>required</span> <span class="type-annotation">ZoneWeightMap</span> <span class="parameter-name">zones</span>, </span></li>
 <li><span class="parameter" id="hydrate-param-k"><span>required</span> <span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/int-class.html">int</a></span> <span class="parameter-name">k</span>, </span></li>
 <li><span class="parameter" id="hydrate-param-analyzer"><span>required</span> <span class="type-annotation">TextAnalyzer</span> <span class="parameter-name">analyzer</span>, </span></li>
-<li><span class="parameter" id="hydrate-param-strategy"><span>required</span> <span class="type-annotation">TokenizingStrategy</span> <span class="parameter-name">strategy</span>, </span></li>
 <li><span class="parameter" id="hydrate-param-tokenFilter"><span class="type-annotation">TokenFilter?</span> <span class="parameter-name">tokenFilter</span>, </span></li>
 <li><span class="parameter" id="hydrate-param-nGramRange"><span class="type-annotation">NGramRange?</span> <span class="parameter-name">nGramRange</span>}</span></li>
 </ol>)
@@ -80,12 +79,11 @@
   required ZoneWeightMap zones,
   required int k,
   required TextAnalyzer analyzer,
-  required TokenizingStrategy strategy,
   TokenFilter? tokenFilter,
   NGramRange? nGramRange,
 }) async {
   final retVal = _HiveTextIndexImpl(k, collectionSizeLoader, nGramRange,
-      strategy, analyzer, zones, tokenFilter);
+      analyzer, zones, tokenFilter);
   await retVal.init(name);
   return retVal;
 }</code></pre>
@@ -138,12 +136,12 @@
     <li class="inherited"><a href="../../hive_text_index/HiveTextIndex/postingsLoader.html">postingsLoader</a></li>
     <li class="inherited"><a href="../../hive_text_index/HiveTextIndex/postingsUpdater.html">postingsUpdater</a></li>
     <li class="inherited"><a href="https://api.flutter.dev/flutter/dart-core/Object/runtimeType.html">runtimeType</a></li>
-    <li class="inherited"><a href="../../hive_text_index/HiveTextIndex/strategy.html">strategy</a></li>
     <li class="inherited"><a href="../../hive_text_index/HiveTextIndex/tokenFilter.html">tokenFilter</a></li>
     <li class="inherited"><a href="../../hive_text_index/HiveTextIndex/vocabularyLength.html">vocabularyLength</a></li>
     <li class="inherited"><a href="../../hive_text_index/HiveTextIndex/zones.html">zones</a></li>
 
     <li class="section-title"><a href="../../hive_text_index/HiveTextIndex-class.html#instance-methods">Methods</a></li>
+    <li><a href="../../hive_text_index/HiveTextIndex/clear.html">clear</a></li>
     <li><a href="../../hive_text_index/HiveTextIndex/close.html">close</a></li>
     <li class="inherited"><a href="../../hive_text_index/HiveTextIndex/getCollectionSize.html">getCollectionSize</a></li>
     <li class="inherited"><a href="../../hive_text_index/HiveTextIndex/getDictionary.html">getDictionary</a></li>

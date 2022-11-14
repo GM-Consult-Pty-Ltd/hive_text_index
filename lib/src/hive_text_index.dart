@@ -25,12 +25,11 @@ abstract class HiveTextIndex
     required ZoneWeightMap zones,
     required int k,
     required TextAnalyzer analyzer,
-    required TokenizingStrategy strategy,
     TokenFilter? tokenFilter,
     NGramRange? nGramRange,
   }) async {
     final retVal = _HiveTextIndexImpl(k, collectionSizeLoader, nGramRange,
-        strategy, analyzer, zones, tokenFilter);
+        analyzer, zones, tokenFilter);
     await retVal.init(name);
     return retVal;
   }
@@ -154,7 +153,6 @@ class _HiveTextIndexImpl extends HiveTextIndexBase {
     this.k,
     this.collectionSizeLoader,
     this.nGramRange,
-    this.strategy,
     this.analyzer,
     this.zones,
     this.tokenFilter,
@@ -171,9 +169,6 @@ class _HiveTextIndexImpl extends HiveTextIndexBase {
 
   @override
   final NGramRange? nGramRange;
-
-  @override
-  final TokenizingStrategy strategy;
 
   @override
   final TextAnalyzer analyzer;

@@ -10,9 +10,7 @@ class HashTagAnalyzer extends English {
 
   static const kK = 3;
 
-  static const kStrategy = TokenizingStrategy.keyWords;
-
-  static const kNGramRange = NGramRange(1, 3);
+  // static const kNGramRange = NGramRange(1, 3);
 
   static const kIndexName = 'hashtags';
 
@@ -22,10 +20,10 @@ class HashTagAnalyzer extends English {
         (element) => termExceptions.containsKey(element.toLowerCase()));
 
   @override
-  Set<String> get stopWords => English.analyzer.stopWords;
+  TermFlag get isStopWord => (term) => English.analyzer.isStopWord(term);
 
   @override
-  Stemmer get stemmer =>
+  StringModifier get stemmer =>
       (term) => term.toLowerCase().replaceAll("'s", '').trim();
 
   @override
@@ -35,7 +33,7 @@ class HashTagAnalyzer extends English {
   // CharacterFilter get characterFilter => (term) => term.toLowerCase().trim();
 
   @override
-  Lemmatizer get lemmatizer => (term) => term;
+  StringModifier get lemmatizer => (term) => term;
 
   @override
   Map<String, String> get termExceptions => {
@@ -120,7 +118,6 @@ class HashTagAnalyzer extends English {
         'atom': '',
         'authority': '',
         'b2bcoin': '',
-        'bakkafrost': '',
         'banccorp': '',
         'banc-corp': '',
         'bancompany': '',
@@ -217,7 +214,6 @@ class HashTagAnalyzer extends English {
         'engines': '',
         'enter': '',
         'enterprises': '',
-        'ericsson': '',
         'erush': '',
         'escudo': '',
         'etf': '',

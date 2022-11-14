@@ -147,10 +147,11 @@ void main() {
           final dT = DateTime.now().difference(start).inSeconds;
           print('Indexed $i hashTags in ${dT.toStringAsFixed(0)} seconds. '
               'Found $l terms.');
-          // print(lastPostingsMap.keys);
+          print(lastPostingsMap.keys);
         }
       });
       final index = await hiveIndex(collectionSizeLoader);
+      await index.clear();
       await index.upsertDictionary(iMindex.dictionary);
       await index.upsertPostings(iMindex.postings);
       await index.upsertKGramIndex(iMindex.kGramIndex);
@@ -181,20 +182,18 @@ Future<HiveTextIndex> hiveIndex(
   return await HiveTextIndex.hydrate(HashTagAnalyzer.kIndexName,
       collectionSizeLoader: collectionSizeLoader,
       analyzer: kAnalyzer,
-      nGramRange: HashTagAnalyzer.kNGramRange,
+      // nGramRange: HashTagAnalyzer.kNGramRange,
       k: HashTagAnalyzer.kK,
-      zones: HashTagAnalyzer.kZones,
-      strategy: HashTagAnalyzer.kStrategy);
+      zones: HashTagAnalyzer.kZones);
 }
 
 Future<InMemoryIndex> inMemoryIndex(int collectionSize) async {
   return InMemoryIndex(
       collectionSize: collectionSize,
       analyzer: kAnalyzer,
-      nGramRange: HashTagAnalyzer.kNGramRange,
+      // nGramRange: HashTagAnalyzer.kNGramRange,
       k: HashTagAnalyzer.kK,
-      zones: HashTagAnalyzer.kZones,
-      strategy: HashTagAnalyzer.kStrategy);
+      zones: HashTagAnalyzer.kZones);
 }
 
 class TestIndexer extends TextIndexerBase {
