@@ -23,7 +23,7 @@ class HashTagAnalyzer extends English {
   TermFlag get isStopWord => (term) => English.analyzer.isStopWord(term);
 
   @override
-  StringModifier get stemmer =>
+  TermModifier get stemmer =>
       (term) => term.toLowerCase().replaceAll("'s", '').trim();
 
   @override
@@ -33,7 +33,7 @@ class HashTagAnalyzer extends English {
   // CharacterFilter get characterFilter => (term) => term.toLowerCase().trim();
 
   @override
-  StringModifier get lemmatizer => (term) => term;
+  TermModifier get lemmatizer => (term) => term;
 
   @override
   Map<String, String> get termExceptions => {
