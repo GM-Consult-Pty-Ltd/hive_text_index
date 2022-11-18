@@ -76,12 +76,21 @@ void main() {
       // print('$kw: $kwposting');
       // });
 
-      final terms = ['Apple', 'Tesla', 'Intel', 'Alphabet'];
+      final terms = [
+        '3M',
+        'MMM',
+        'Apple inc',
+        'AAPL',
+        'Tesla',
+        'Intel',
+        'Alphabet'
+      ];
 
       await Future.forEach(terms, (String term) async {
         final tokenTerms = (await index.analyzer.tokenizer(term)).terms;
         if (tokenTerms.isNotEmpty) {
           final qt = tokenTerms.first;
+          final service = await hashtagsService;
           final kGrams = qt.kGrams();
           final dFtMap = await index.getDictionary(tokenTerms);
           final keywordPostings = await index.getKeywordPostings(tokenTerms);
@@ -91,33 +100,46 @@ void main() {
             nKgramPostings += e.value.length;
           }
           final postings = await index.getPostings(tokenTerms);
+          final stocks = postings[qt];
+          if (stocks != null &&
+              dFtMap.isNotEmpty &&
+              stocks.isNotEmpty &&
+              keywordPostings.isNotEmpty &&
+              kGramsMap.isNotEmpty) {
+            final key = stocks.keys.first;
+            final stock = await service.read(key);
+            final stockName = stock?['name'] ?? '';
+            final results = [
+              {'Item': 'Term', 'Value': qt},
+              {'Item': 'Stock', 'Value': stockName},
+              {
+                'Item': 'dFt',
+                'Value': dFtMap.isEmpty ? '' : dFtMap.values.first
+              },
+              {
+                'Item': 'N Keyword postings',
+                'Value': keywordPostings.isEmpty
+                    ? ''
+                    : keywordPostings.values.first.length
+              },
+              {
+                'Item': 'N postings',
+                'Value': postings.isEmpty ? '' : postings.values.first.length
+              },
+              {'Item': 'N k-gram postings', 'Value': nKgramPostings},
+            ];
 
-          final results = [
-            {'Item': 'Term', 'Value': qt},
-            {'Item': 'dFt', 'Value': dFtMap.isEmpty ? '' : dFtMap.values.first},
-            {
-              'Item': 'N Keyword postings',
-              'Value': keywordPostings.isEmpty
-                  ? ''
-                  : keywordPostings.values.first.length
-            },
-            {
-              'Item': 'N postings',
-              'Value': postings.isEmpty ? '' : postings.values.first.length
-            },
-            {'Item': 'N k-gram postings', 'Value': nKgramPostings},
-          ];
-
-          Console.out(
-            title: 'HASHTAGS',
-            results: results,
-            // fields: ['Item', 'Value']
-          );
+            Console.out(
+              title: 'HASHTAGS',
+              results: results,
+              // fields: ['Item', 'Value']
+            );
+          }
         }
       });
 
       await service.close();
-      await index.close();
+      await index.dispose();
     }));
 
     test('Index hashtags', () async {
@@ -125,12 +147,12 @@ void main() {
       final service = await hashtagsService;
       Future<int> collectionSizeLoader() async => service.dataStore.length;
       final iMindex = await inMemoryIndex(service.dataStore.length);
-      final indexer = TextIndexer(iMindex);
+      // final indexer = TextIndexer(iMindex);
       final keys = service.dataStore.keys.map((e) => e.toString()).toList();
       var i = 0;
       final start = DateTime.now();
       // keys = keys.sublist(16600);
-      PostingsMap lastPostingsMap = {};
+      // PostingsMap lastPostingsMap = {};
       await Future.forEach(keys, (String key) async {
         final json = await service.read(key);
         if (json != null) {
@@ -138,7 +160,8 @@ void main() {
           if (name.contains('intel corp')) {
             print(json);
           }
-          lastPostingsMap = await indexer.indexJson(key, json);
+          await iMindex.indexJson(key, json,
+              tokenFilter: HashTagAnalyzer.kFilterTokens);
         }
         final l = await iMindex.vocabularyLength;
 
@@ -147,7 +170,7 @@ void main() {
           final dT = DateTime.now().difference(start).inSeconds;
           print('Indexed $i hashTags in ${dT.toStringAsFixed(0)} seconds. '
               'Found $l terms.');
-          print(lastPostingsMap.keys);
+          // print(lastPostingsMap.keys);
         }
       });
       final index = await hiveIndex(collectionSizeLoader);
@@ -158,7 +181,7 @@ void main() {
       await index.upsertKeywordPostings(iMindex.keywordPostings);
       await service.close();
 
-      await index.close();
+      await index.dispose();
     });
   });
 }
@@ -182,7 +205,7 @@ Future<HiveTextIndex> hiveIndex(
   return await HiveTextIndex.hydrate(HashTagAnalyzer.kIndexName,
       collectionSizeLoader: collectionSizeLoader,
       analyzer: kAnalyzer,
-      // nGramRange: HashTagAnalyzer.kNGramRange,
+      nGramRange: HashTagAnalyzer.kNGramRange,
       k: HashTagAnalyzer.kK,
       zones: HashTagAnalyzer.kZones);
 }
@@ -191,21 +214,21 @@ Future<InMemoryIndex> inMemoryIndex(int collectionSize) async {
   return InMemoryIndex(
       collectionSize: collectionSize,
       analyzer: kAnalyzer,
-      // nGramRange: HashTagAnalyzer.kNGramRange,
+      nGramRange: HashTagAnalyzer.kNGramRange,
       k: HashTagAnalyzer.kK,
       zones: HashTagAnalyzer.kZones);
 }
 
-class TestIndexer extends TextIndexerBase {
-  @override
-  final HiveTextIndex index;
+// class TestIndexer extends TextIndexerBase {
+//   @override
+//   final HiveTextIndex index;
 
-  TestIndexer(this.index, this.dataService);
+//   TestIndexer(this.index, this.dataService);
 
-  final JsonDataService dataService;
-}
+//   final JsonDataService dataService;
+// }
 
-TextIndexer indexer(HiveTextIndex index) => TextIndexer(index);
+// TextIndexer indexer(HiveTextIndex index) => TextIndexer(index);
 
 /// Hydrates a [JsonDataService] with a large dataset of securities.
 Future<JsonDataService<Box<String>>> get securitiesService async {

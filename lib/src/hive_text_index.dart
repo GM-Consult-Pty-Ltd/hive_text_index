@@ -13,9 +13,7 @@ part 'parts/_postings.dart';
 part 'parts/_keyword_postings.dart';
 
 /// A [Hive] based [InvertedIndex] with [AsyncCallbackIndexMixin].
-abstract class HiveTextIndex
-    with AsyncCallbackIndexMixin
-    implements InvertedIndex {
+abstract class HiveTextIndex extends AsyncCallbackIndexBase {
 //
 
   /// Ensure that [Hive] is initialized by calling ``` Hive.init(path);```.
@@ -28,8 +26,8 @@ abstract class HiveTextIndex
     TokenFilter? tokenFilter,
     NGramRange? nGramRange,
   }) async {
-    final retVal = _HiveTextIndexImpl(k, collectionSizeLoader, nGramRange,
-        analyzer, zones, tokenFilter);
+    final retVal = _HiveTextIndexImpl(
+        k, collectionSizeLoader, nGramRange, analyzer, zones, tokenFilter);
     await retVal.init(name);
     return retVal;
   }
@@ -49,8 +47,8 @@ abstract class HiveTextIndex
   /// Closes all the [Hive] boxes used by this index.
   Future<void> clear();
 
-  /// Closes all the [Hive] boxes used by this index.
-  Future<void> close();
+  // /// Closes all the [Hive] boxes used by this index.
+  // Future<void> close();
 }
 
 /// Mixin class implements HiveTextIndex.
@@ -88,14 +86,6 @@ abstract class HiveTextIndexMixin implements HiveTextIndex {
   Future<int> get vocabularyLength => dictionary.length();
 
   @override
-  Future<void> close() async {
-    await dictionary.dataStore.close();
-    await kGramIndex.dataStore.close();
-    await postingsIndex.dataStore.close();
-    await keywordIndex.dataStore.close();
-  }
-
-  @override
   Future<void> clear() async {
     await dictionary.dataStore.clear();
     await kGramIndex.dataStore.clear();
@@ -106,9 +96,18 @@ abstract class HiveTextIndexMixin implements HiveTextIndex {
 
 /// Extendable base class implementation of [HiveTextIndex].
 abstract class HiveTextIndexBase
-    with HiveTextIndexMixin, AsyncCallbackIndexMixin {
+    with HiveTextIndexMixin, AsyncCallbackIndexMixin, TextIndexerMixin {
   /// A const default generative constructor.
   HiveTextIndexBase();
+
+  @override
+  Future<void> dispose() async {
+    await super.dispose();
+    await dictionary.dataStore.close();
+    await kGramIndex.dataStore.close();
+    await postingsIndex.dataStore.close();
+    await keywordIndex.dataStore.close();
+  }
 
   /// Opens all the [Hive] boxes used by the [HiveTextIndex].
   Future<void> init(String name) async {

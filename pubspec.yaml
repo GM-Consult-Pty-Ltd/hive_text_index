@@ -19,11 +19,11 @@ dependencies:
   collection: ^1.17.0
   gmconsult_dev: ^0.0.7
   hive: ^2.2.3
-  rxdart: ^0.27.5
-  text_indexing:
-    git: https://github.com/GM-Consult-Pty-Ltd/text_indexing.git
+  rxdart: ^0.27.7
+  # text_indexing:
+  #   git: https://github.com/GM-Consult-Pty-Ltd/text_indexing.git
 
-  # text_indexing: ^0.22.4
+  text_indexing: ^0.23.0-1
 
 dev_dependencies:
   lints: ^2.0.1
