@@ -23,7 +23,7 @@ dependencies:
   # text_indexing:
   #   git: https://github.com/GM-Consult-Pty-Ltd/text_indexing.git
 
-  text_indexing: ^0.23.0-1
+  text_indexing: ^0.23.0-4
 
 dev_dependencies:
   lints: ^2.0.1
