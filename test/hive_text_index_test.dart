@@ -16,7 +16,7 @@ import 'dart:io';
 import 'package:text_indexing/type_definitions.dart';
 import 'hashtag_analyzer.dart';
 
-String get kPath => '${Directory.current.path}\\dev\\data';
+String get kPath => '${Directory.current.path}/dev/data';
 
 TextAnalyzer get kAnalyzer => HashTagAnalyzer();
 
@@ -167,8 +167,8 @@ void main() {
 
         i++;
         if (i.remainder(100) == 0) {
-          final dT = DateTime.now().difference(start).inSeconds;
-          print('Indexed $i hashTags in ${dT.toStringAsFixed(0)} seconds. '
+          final dT = DateTime.now().difference(start).inMilliseconds / 1000;
+          print('Indexed $i hashTags in ${dT.toStringAsFixed(3)} seconds. '
               'Found $l terms.');
           // print(lastPostingsMap.keys);
         }
