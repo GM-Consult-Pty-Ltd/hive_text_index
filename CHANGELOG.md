@@ -6,16 +6,11 @@ All rights reserved.
 
 *THIS PACKAGE IS **PRE-RELEASE** AND SUBJECT TO DAILY BREAKING CHANGES.*
 
-
-## 0.0.1-4
+## 0.0.1-6
 **PRE-RELEASE**
 
-### *Bug fixes*
-* Fixed `HashtagsAnalyzer`.
-
 ### *Updated*
-* Dependencies.
-* Tests.
+* Bumped `text_indexing` to 1.0.0.
 
 ## 0.0.1-4
 **PRE-RELEASE**

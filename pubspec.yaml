@@ -4,7 +4,7 @@
 
 name: hive_text_index
 description: A Hive based InvertedIndex with AsyncCallbackIndexMixin.
-version: 0.0.1-5
+version: 0.0.1-6
 publish_to: none
 repository: https://github.com/GM-Consult-Pty-Ltd/hive_text_index
 homepage: https://github.com/GM-Consult-Pty-Ltd
@@ -23,7 +23,7 @@ dependencies:
   # text_indexing:
   #   git: https://github.com/GM-Consult-Pty-Ltd/text_indexing.git
 
-  text_indexing: ^0.23.0-4
+  text_indexing: ^1.0.0
 
 dev_dependencies:
   lints: ^2.0.1
